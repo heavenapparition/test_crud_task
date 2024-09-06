@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from typing import Any, Generic, TypeVar
 from app.api.deps import get_db
-# from fastapi_pagination import Params, Page
 from sqlmodel import Session, select
 from pydantic import BaseModel
 from sqlmodel import SQLModel, func
@@ -9,8 +8,6 @@ from sqlmodel.sql.expression import Select
 from sqlalchemy import exc
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
-# CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
-# UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 T = TypeVar("T", bound=SQLModel)
 
