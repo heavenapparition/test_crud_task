@@ -37,6 +37,16 @@ def create_project(
         project_on_creation: CreateProject,
         session: Session = Depends(deps.get_db),
 ):
+    """
+    Создание нового проекта
+
+    Args:
+        project_on_creation: параметры создания проекта
+        session: сессия БД
+
+    Returns:
+        Объект проекта
+    """
     project = cruds.project.create(
         session=session,
         obj_in=project_on_creation
@@ -51,6 +61,17 @@ def update_project(
         project_on_update: UpdateProject,
         session: Session = Depends(deps.get_db)
 ):
+    """
+    Обновление существующего проекта
+
+    Args:
+        project_id: id проекта
+        project_on_update: параметры обновления проекта
+        session: сессия БД
+
+    Returns:
+        Объект проекта
+    """
     project = cruds.project.get_one_by_id(session=session, id=project_id)
     if not project:
         raise HTTPException(
@@ -71,6 +92,16 @@ def get_project(
         project_id: int,
         session: Session = Depends(deps.get_db),
 ):
+    """
+    Получение существующего проекта по айди
+
+    Args:
+        project_id: id проекта
+        session: сессия БД
+
+    Returns:
+        Объект проекта
+    """
     project = cruds.project.get_one_by_id(
         session=session,
         id=project_id
@@ -81,3 +112,35 @@ def get_project(
             detail="Project not found"
         )
     return project
+
+
+@router.delete("/", response_model=dict)
+def delete_project(
+        project_id: int,
+        session: Session = Depends(deps.get_db),
+):
+    """
+    Удаление существующего проекта
+
+    Args:
+        project_id: id проекта
+        session: сессия БД
+
+    Returns:
+        None
+    """
+    project = cruds.project.get_one_by_id(
+        session=session,
+        id=project_id
+    )
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+    cruds.project.remove(
+        session=session,
+        id=project_id
+    )
+    return {"detail": "Project deleted"}
+

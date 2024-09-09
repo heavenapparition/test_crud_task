@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.models import *
 from app.models.project import *
 from app import cruds
 from app.api import deps
@@ -17,6 +18,18 @@ def get_tasks_by_project_id(
         pagination: Pagination = Depends(deps.pagination),
         task_filters: list | None = Depends(deps.get_task_filters)
 ):
+    """
+    Получение списка задач для указанного проекта
+
+    Args:
+        project_id: id проекта
+        session: сессия БД
+        pagination: параметры пагинации
+        task_filters: фильтры для задач
+
+    Returns:
+        список объектов задач
+    """
     tasks = cruds.task.get_tasks_by_project_id_with_update(
         project_id=project_id,
         session=session,
@@ -33,6 +46,18 @@ def create_task(
         project_id: int,
         session: Session = Depends(deps.get_db),
 ):
+    """
+    Создание задачи
+
+    Args:
+        task_on_creation: объект задачи
+        project_id: id проекта
+        session: сессия БД
+
+    Returns:
+        созданная задача
+    """
+    
     project = cruds.project.get_one_by_id(session=session, id=project_id)
     if not project:
         raise HTTPException(
@@ -49,6 +74,7 @@ def create_task(
         internal_commit=False
     )
     session.commit()
+    session.refresh(task)
     return task
 
 
@@ -58,6 +84,18 @@ def update_task(
         task_on_update: UpdateTask,
         session: Session = Depends(deps.get_db)
 ):
+    """
+    Обновление существующей задачи
+
+    Args:
+        task_id: id задачи
+        task_on_update: данные для обновления задачи
+        session: сессия БД
+
+    Returns:
+        обновленная задача
+    """
+    
     task = cruds.task.get_one_by_id(session=session, id=task_id)
     if not task:
         raise HTTPException(
@@ -75,6 +113,7 @@ def update_task(
         internal_commit=False
     )
     session.commit()
+    session.refresh(task)
     return task
 
 
@@ -83,6 +122,16 @@ def get_task(
         task_id: int,
         session: Session = Depends(deps.get_db),
 ):
+    """
+    Получение существующей задачи
+
+    Args:
+        task_id: id задачи
+        session: сессия БД
+
+    Returns:
+        Объект задачи
+    """
     task = cruds.task.get_one_by_id(
         session=session,
         id=task_id
@@ -98,3 +147,31 @@ def get_task(
             detail="Task not found"
         )
     return task
+
+
+@router.delete("/", response_model=dict)
+def delete_task(
+        task_id: int,
+        session: Session = Depends(deps.get_db),
+):
+    """
+    Удаление задачи
+
+    Args:
+        task_id: id задачи
+        session: сессия БД
+    """
+    task = cruds.task.get_one_by_id(
+        session=session,
+        id=task_id
+    )
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+    cruds.task.delete(
+        session=session,
+        obj_current=task
+    )
+    return {"detail": "Task deleted"}
