@@ -1,8 +1,8 @@
 """Added models
 
-Revision ID: 6c2a69a95f62
+Revision ID: e0ba46a3de81
 Revises: 
-Create Date: 2024-09-06 18:44:40.847557
+Create Date: 2024-09-09 12:09:14.415225
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision = '6c2a69a95f62'
+revision = 'e0ba46a3de81'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,7 +33,7 @@ def upgrade():
     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
     sa.Column('title', sqlmodel.sql.sqltypes.AutoString(length=64), nullable=False),
     sa.Column('due_date', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('status', sa.Enum('TODO', 'IN_PROGRESS', 'COMPLETED', name='taskstatus'), nullable=False),
+    sa.Column('status', sa.Enum('TODO', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE', name='taskstatus'), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('project_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['project_id'], ['project.id'], ),

@@ -1,22 +1,34 @@
+
 from fastapi import APIRouter, Depends, HTTPException
-from typing import List
-import logging
 from sqlalchemy.orm import Session
-from app.models.project import *
+
 from app import cruds
-
 from app.api import deps
-from app.models.base import ProjectBase
-from app.cruds import project
-
+from app.models.project import *
+from app.models.utils import Pagination
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ProjectOut])
+@router.get("/", response_model=list[ProjectOut])
 def get_projects(
-        session: Session = Depends(deps.get_db)
-):
-    projects = cruds.project.get_list(session=session)
+    session: Session = Depends(deps.get_db),
+    pagination: Pagination = Depends(deps.pagination)
+) -> list[ProjectOut]:
+    """
+    Получение списка всех проектов
+
+    Args:
+        session: сессия БД
+        pagination: параметры пагинации
+
+    Returns:
+        список проектов
+    """
+    projects = cruds.project.get_list(
+        session=session,
+        skip=pagination.skip,
+        limit=pagination.limit
+    )
     return projects
 
 
@@ -36,10 +48,10 @@ def create_project(
 @router.patch("/", response_model=ProjectOut)
 def update_project(
         project_id: int,
-        project_on_update:UpdateProject,
+        project_on_update: UpdateProject,
         session: Session = Depends(deps.get_db)
 ):
-    project = cruds.project.get_one_by_id(session, project_id)
+    project = cruds.project.get_one_by_id(session=session, id=project_id)
     if not project:
         raise HTTPException(
             status_code=404,

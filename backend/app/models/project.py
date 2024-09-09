@@ -1,11 +1,12 @@
-from typing import Optional, List
-from sqlmodel import Field, Relationship, DateTime
+
+from sqlmodel import Field, Relationship
+
 from .base import ProjectBase, SQLModel
 
 
 class Project(ProjectBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    tasks: List["Task"] | None = Relationship(back_populates="project")
+    id: int | None = Field(default=None, primary_key=True)
+    tasks: list["Task"] | None = Relationship(back_populates="project")
 
 
 class ProjectOut(ProjectBase):
@@ -13,8 +14,8 @@ class ProjectOut(ProjectBase):
 
 
 class UpdateProject(SQLModel):
-    description: Optional[str] = Field(None, max_length=255)
-    name: Optional[str] = Field(None, max_length=64)
+    description: str | None = Field(None, max_length=255)
+    name: str | None = Field(None, max_length=64)
 
 
 class CreateProject(SQLModel):

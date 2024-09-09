@@ -1,6 +1,8 @@
-from sqlmodel import Field, Relationship, SQLModel, DateTime
-from app.models.utils import TimeStampModel, TaskStatus
 from datetime import datetime
+
+from sqlmodel import DateTime, Field, SQLModel  # noqa
+
+from app.models.utils import TaskStatus, TimeStampModel
 
 
 class WorkBase(TimeStampModel):

@@ -1,11 +1,12 @@
-from fastapi import HTTPException
 from typing import Any, Generic, TypeVar
-from app.api.deps import get_db
-from sqlmodel import Session, select
+
+from fastapi import HTTPException
 from pydantic import BaseModel
-from sqlmodel import SQLModel, func
-from sqlmodel.sql.expression import Select
 from sqlalchemy import exc
+from sqlmodel import Session, SQLModel, func, select
+from sqlmodel.sql.expression import Select
+
+from app.api.deps import get_db
 
 ModelType = TypeVar("ModelType", bound=SQLModel)
 SchemaType = TypeVar("SchemaType", bound=BaseModel)

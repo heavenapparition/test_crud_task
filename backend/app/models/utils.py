@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlmodel import Field, SQLModel, func, DateTime
 from enum import Enum
+
+from pydantic import BaseModel
+from sqlmodel import DateTime, Field, SQLModel, func
 
 
 class TimeStampModel(SQLModel):
@@ -21,3 +23,16 @@ class TaskStatus(str, Enum):
     TODO = "todo"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
+    OVERDUE = "overdue"
+
+class Pagination(BaseModel):
+    skip: int = 0
+    limit: int = 100
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "skip": 0,
+                "limit": 10
+            }
+        }
